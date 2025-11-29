@@ -2,263 +2,277 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>김창현 — 대안교육 / 학업중단 위기 청소년 교육</title>
+  <meta name="description" content="전남 이음학교 김창현 교사 포트폴리오. 대안교육과 학업중단 위기 청소년을 위한 통합 안전망 구축." />
 
-  <!-- Tailwind CDN (play) -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts (Noto Sans KR & Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons (아이콘) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <script>
-    // Tailwind 커스터마이징: 파스텔 블루 + 짙은 블루 + 은색 느낌
     tailwind.config = {
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['"Inter"', '"Noto Sans KR"', 'sans-serif'],
+          },
           colors: {
-            pastelBlue: '#E9F4FF',
-            softBlue: '#8FBCE6',
-            deepBlue: '#123B6A',
-            silverish: '#C8D6E5'
+            slate: {
+              850: '#1e293b', 
+              900: '#0f172a',
+            },
+            primary: {
+              DEFAULT: '#0F172A', // Deep Navy
+              light: '#334155',
+            },
+            accent: {
+              DEFAULT: '#3B82F6', // Royal Blue
+              soft: '#EFF6FF',
+            }
           },
-          boxShadow: {
-            soft: '0 6px 18px rgba(18,59,106,0.08)',
-            card: '0 8px 30px rgba(14,40,70,0.07)'
+          animation: {
+            'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
           },
-          borderRadius: {
-            xl: '14px'
+          keyframes: {
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
           }
         }
       }
     }
   </script>
 
-  <!-- React + ReactDOM + Babel (for JSX in-browser) -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- React & Babel -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    /* 간단한 기본 스타일 보완 */
-    html,body,#root { height: 100%; }
-    body { background-color: #ffffff; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+    body { background-color: #F8FAFC; } /* Slate-50 */
+    .glass-header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
-<body>
+<body class="text-slate-800 antialiased selection:bg-accent selection:text-white">
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
 
-    function Badge({children}) {
-      return <span className="px-3 py-1 rounded-full text-sm font-semibold bg-pastelBlue text-deepBlue border border-silverish shadow-soft mr-2">{children}</span>;
-    }
+    // --- Components ---
 
-    function SectionCard({title, children, className}) {
+    const Badge = ({ children, color = "blue" }) => {
+      const style = color === "blue" 
+        ? "bg-blue-50 text-blue-700 border-blue-200" 
+        : "bg-slate-100 text-slate-700 border-slate-200";
       return (
-        <section className={`bg-white rounded-xl shadow-card p-6 border border-gray-100 ${className || ''}`}>
-          <h3 className="text-xl font-semibold text-deepBlue mb-4">{title}</h3>
-          <div className="text-gray-700 text-sm leading-relaxed">{children}</div>
-        </section>
+        <span className={`px-3 py-1 rounded-full text-xs font-semibold border tracking-wide ${style}`}>
+          {children}
+        </span>
       );
-    }
+    };
 
-    function App(){
+    const SectionTitle = ({ title, icon }) => (
+      <div className="flex items-center gap-2 mb-6 border-b border-slate-200 pb-3">
+        {icon && <i data-lucide={icon} className="w-5 h-5 text-accent"></i>}
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">{title}</h2>
+      </div>
+    );
+
+    const Card = ({ children, className = "" }) => (
+      <div className={`bg-white rounded-2xl p-6 md:p-8 border border-slate-100 shadow-sm card-hover ${className}`}>
+        {children}
+      </div>
+    );
+
+    const NavItem = ({ href, label, active }) => (
+      <a 
+        href={href} 
+        className={`text-sm font-medium transition-colors hover:text-accent ${active ? 'text-accent' : 'text-slate-500'}`}
+      >
+        {label}
+      </a>
+    );
+
+    // --- Main App ---
+
+    function App() {
+      const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+      useEffect(() => {
+        // Lucide Icons 렌더링
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [isMenuOpen]); // 메뉴 열릴 때마다 아이콘 갱신
+
       return (
         <div className="min-h-screen flex flex-col">
-          <header className="max-w-5xl mx-auto w-full p-6">
-            <nav className="flex items-center justify-between">
+          {/* Header */}
+          <header className="fixed top-0 w-full z-50 glass-header">
+            <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src="eum_logo.png" alt="이음학교 로고" className="w-12 h-12 object-contain rounded-full shadow-soft border" />
-                <div>
-                  <div className="text-sm text-gray-500">Teacher</div>
-                  <div className="text-lg font-semibold text-deepBlue">김창현 (Kim Changhyun)</div>
-                </div>
+                <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold text-lg">K</div>
+                <div className="font-bold text-slate-900 tracking-tight">Kim Changhyun</div>
               </div>
-              <div className="flex items-center gap-3">
-                <a href="#about" className="text-sm text-gray-600 hover:text-deepBlue">About</a>
-                <a href="#experience" className="text-sm text-gray-600 hover:text-deepBlue">Experience</a>
-                <a href="#lectures" className="text-sm text-gray-600 hover:text-deepBlue">Lectures</a>
-                <a href="#contact" className="text-sm text-gray-600 hover:text-deepBlue">Contact</a>
+              
+              {/* Desktop Nav */}
+              <nav className="hidden md:flex gap-8">
+                <NavItem href="#about" label="About" />
+                <NavItem href="#experience" label="Experience" />
+                <NavItem href="#lectures" label="Lectures" />
+                <NavItem href="#contact" label="Contact" />
+              </nav>
+
+              {/* Mobile Menu Button */}
+              <button className="md:hidden text-slate-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                <i data-lucide={isMenuOpen ? "x" : "menu"}></i>
+              </button>
+            </div>
+
+            {/* Mobile Nav Dropdown */}
+            {isMenuOpen && (
+              <div className="md:hidden bg-white border-b border-slate-100 px-6 py-4 space-y-4 shadow-lg animate-fade-in-up">
+                <a href="#about" className="block text-slate-600 font-medium" onClick={() => setIsMenuOpen(false)}>About</a>
+                <a href="#experience" className="block text-slate-600 font-medium" onClick={() => setIsMenuOpen(false)}>Experience</a>
+                <a href="#lectures" className="block text-slate-600 font-medium" onClick={() => setIsMenuOpen(false)}>Lectures</a>
+                <a href="#contact" className="block text-slate-600 font-medium" onClick={() => setIsMenuOpen(false)}>Contact</a>
               </div>
-            </nav>
+            )}
           </header>
 
-          <main className="flex-1 max-w-5xl mx-auto w-full px-6 pb-16">
-            {/* HERO */}
-            <section className="bg-gradient-to-r from-pastelBlue to-white rounded-xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-card border border-gray-100">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <Badge>Alternative Education</Badge>
-                  <Badge>Future Classroom</Badge>
-                </div>
-                <h1 className="text-3xl md:text-4xl font-extrabold text-deepBlue leading-snug">
-                  김창현 — 교사
-                </h1>
-                <p className="mt-3 text-gray-700 text-lg">
-                  전남 이음학교 소속 · <span className="font-medium text-deepBlue">대안교육 / 학업중단 위기 청소년 교육</span>에 집중합니다.
-                </p>
+          <main className="flex-1 w-full max-w-6xl mx-auto px-6 pt-24 pb-20 space-y-20">
+            
+            {/* HERO SECTION */}
+            <section className="animate-fade-in-up">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full mix-blend-overlay filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/4"></div>
 
-                <p className="mt-4 text-sm text-gray-600 max-w-xl">
-                  전체 주제: <span className="font-semibold text-deepBlue">“대안교육과 학업중단 위기 청소년을 위한 통합 안전망 구축”</span><br/>
-                  핵심 목표는 유네스코의 지향점을 교육으로 구축하는 것입니다.
-                </p>
+                <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
+                  <div className="flex-1 space-y-6 text-center md:text-left">
+                    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                      <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-200 text-xs font-semibold border border-blue-500/30">Alternative Education</span>
+                      <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-200 text-xs font-semibold border border-emerald-500/30">Crisis Intervention</span>
+                    </div>
+                    
+                    <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
+                      교육으로 짓는<br/>
+                      마음의 방벽.
+                    </h1>
+                    
+                    <p className="text-slate-300 text-lg md:text-xl font-light max-w-2xl leading-relaxed">
+                      안녕하세요, 전남 이음학교 교사 <strong className="text-white font-semibold">김창현</strong>입니다.<br/>
+                      학업중단 위기 청소년을 위한 <span className="text-blue-300 underline underline-offset-4 decoration-1">통합 안전망</span>을 구축합니다.
+                    </p>
 
-                <div className="mt-6 flex gap-3">
-                  <a href="#lectures" className="rounded-xl px-4 py-2 bg-deepBlue text-white text-sm shadow-soft hover:opacity-95">강의 안내 (Lectures)</a>
-                  <a href="#contact" className="rounded-xl px-4 py-2 bg-white text-deepBlue border border-silverish text-sm shadow-soft hover:opacity-95">문의하기 (Contact)</a>
-                </div>
-              </div>
+                    <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                      <a href="#lectures" className="px-6 py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-blue-50 transition shadow-lg flex items-center justify-center gap-2">
+                        강의 주제 보기 <i data-lucide="arrow-right" className="w-4 h-4"></i>
+                      </a>
+                      <a href="#contact" className="px-6 py-3 bg-slate-700 text-white rounded-xl font-medium hover:bg-slate-600 transition border border-slate-600 flex items-center justify-center gap-2">
+                        문의하기 <i data-lucide="mail" className="w-4 h-4"></i>
+                      </a>
+                    </div>
+                  </div>
 
-              <div className="w-full md:w-56 flex-shrink-0 flex flex-col items-center">
-                <div className="w-48 h-48 rounded-2xl overflow-hidden border border-silverish shadow-soft bg-white">
-                  <!-- 로컬 이미지: 박보검.png (프로필 사진) -->
-                  <img src="박보검.png" alt="김창현 프로필" className="object-cover w-full h-full" />
-                </div>
-                <div className="mt-3 text-center text-sm text-gray-600">
-                  중등 대안교육 / 음악·목공 융합 수업 · 위탁교육 경험
+                  {/* Profile Image Area */}
+                  <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 relative">
+                    <div className="absolute inset-0 bg-blue-500 rounded-full blur-2xl opacity-20 transform translate-y-4"></div>
+                    {/* Placeholder Image: 실제 이미지가 없으면 깨지므로 placeholder 사용. 실제 배포시 src 수정 필요 */}
+                    <img 
+                      src="https://placehold.co/400x400/1e293b/ffffff?text=KIM" 
+                      alt="김창현 프로필" 
+                      className="w-full h-full object-cover rounded-2xl border-4 border-slate-700/50 shadow-2xl relative z-10"
+                    />
+                    <div className="absolute -bottom-4 -right-4 bg-white text-slate-900 px-4 py-2 rounded-lg shadow-xl text-xs font-bold border border-slate-100 flex items-center gap-1 z-20">
+                      <i data-lucide="award" className="w-3 h-3 text-orange-500"></i> 교육부장관표창
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
 
-            {/* ABOUT */}
-            <div id="about" className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <SectionCard title="About">
-                <p className="mb-3">“전쟁은 인간의 마음으로부터 시작되고, 그 방벽을 구축해야 할 곳도 인간의 마음이다.”</p>
-                <p>
-                  저는 유네스코의 지향점을 교육으로 구현하기 위해 실천하는 것을 목표로 합니다. 교육 현장에서 학생 개개인의 존엄과 안전을 우선으로 하며,
-                  특히 학업중단 위기 학생들이 학교와 사회의 안전망 안에서 회복하고 성장할 수 있도록 통합적 지원을 설계합니다.
-                </p>
-              </SectionCard>
-
-              <SectionCard title="Focus / 관심 영역">
-                <ul className="list-disc pl-5 space-y-2">
-                  <li>대안교육의 법적 이해 및 운영 모델</li>
-                  <li>학업중단 위기 청소년을 위한 통합 안전망 구축</li>
-                  <li>음악·목공 융합 수업을 통한 진로·정서 지원</li>
-                  <li>위탁교육 기관 운영과 지역 연계 모델</li>
-                </ul>
-              </SectionCard>
-
-              <SectionCard title="Quick Links">
-                <div className="flex flex-col gap-2">
-                  <a className="text-sm" href="#experience">Experience • 경력</a>
-                  <a className="text-sm" href="#lectures">Lectures • 강의</a>
-                  <a className="text-sm" href="#contact">Contact • 문의</a>
-                  <a className="text-sm text-gray-500">자세한 이력 및 수상은 첨부한 강사카드(레포지토리) 참조</a>
-                </div>
-              </SectionCard>
+            {/* ABOUT & FOCUS */}
+            <div id="about" className="grid grid-cols-1 md:grid-cols-12 gap-6">
+              <div className="md:col-span-8">
+                <Card className="h-full">
+                  <SectionTitle title="Philosophy" icon="quote" />
+                  <p className="text-lg font-medium text-slate-800 mb-4">
+                    “전쟁은 인간의 마음으로부터 시작되고,<br/>그 방벽을 구축해야 할 곳도 인간의 마음이다.”
+                  </p>
+                  <p className="text-slate-600 leading-relaxed">
+                    유네스코 헌장의 서문처럼, 저는 교육 현장에서 학생 개개인의 존엄과 안전을 최우선으로 합니다. 
+                    특히 학교 밖으로 밀려날 위기에 처한 학생들이 다시 사회적 안전망 안에서 회복하고 성장할 수 있도록 돕는 것이 저의 소명입니다.
+                  </p>
+                </Card>
+              </div>
+              <div className="md:col-span-4">
+                <Card className="h-full bg-slate-50 border-slate-200">
+                  <SectionTitle title="Focus Areas" icon="target" />
+                  <ul className="space-y-3">
+                    {['대안교육 법적 모델 연구', '위기 청소년 통합 지원', '음악/목공 융합 수업', '위탁교육 및 지역 연계'].map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-3 text-slate-700 text-sm font-medium">
+                        <div className="w-1.5 h-1.5 rounded-full bg-accent"></div>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              </div>
             </div>
 
             {/* EXPERIENCE */}
-            <div id="experience" className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <SectionCard title="Experience">
-                <div className="space-y-4">
-                  <div>
-                    <div className="text-sm text-gray-500">임용</div>
-                    <div className="font-semibold text-deepBlue">2013 — 교사 임용</div>
+            <div id="experience">
+              <SectionTitle title="Professional Experience" icon="briefcase" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold text-slate-900">주요 경력</h3>
+                    <Badge>10+ Years</Badge>
                   </div>
-
-                  <div>
-                    <div className="text-sm text-gray-500">근무 학교</div>
-                    <ul className="mt-2 text-sm">
-                      <li><span className="font-medium">2013–2015</span> 순천승주중 — 작은학교살리기 활동 주도</li>
-                      <li><span className="font-medium">2016–2020</span> 순천신흥중 — 무한상상실 운영·교육프로그램 개발</li>
-                      <li><span className="font-medium">2021–2025</span> 이음학교 — 위기청소년 교육 중심 활동</li>
-                    </ul>
+                  <div className="space-y-6 relative border-l border-slate-200 ml-3 pl-8 py-2">
+                    {[
+                      { year: '2021 — 현재', role: '이음학교', desc: '위기청소년 교육, 통합지원모델 설계' },
+                      { year: '2016 — 2020', role: '순천신흥중', desc: '무한상상실 운영, 메이커 교육 개발' },
+                      { year: '2013 — 2015', role: '순천승주중', desc: '작은학교살리기 프로젝트 주도' },
+                    ].map((exp, idx) => (
+                      <div key={idx} className="relative">
+                        <span className="absolute -left-[41px] top-1.5 w-3 h-3 rounded-full bg-white border-2 border-accent"></span>
+                        <div className="text-sm text-slate-400 font-mono mb-1">{exp.year}</div>
+                        <div className="font-bold text-slate-800">{exp.role}</div>
+                        <div className="text-sm text-slate-600 mt-1">{exp.desc}</div>
+                      </div>
+                    ))}
                   </div>
+                </Card>
 
-                  <div>
-                    <div className="text-sm text-gray-500">주요 교육실적</div>
-                    <ul className="mt-2 text-sm list-disc pl-5">
-                      <li>기술경진대회 학생지도 우수</li>
-                      <li>정화보경진대회 학생지도 우수</li>
-                      <li>교육부 교실혁명선도교사 선정</li>
-                      <li>대안교육 유공 교육부장관표창 수상</li>
-                    </ul>
-                  </div>
-
-                  <div className="text-xs text-gray-500 mt-2">상세 이력 및 수상 내역은 레포지토리의 강사카드(첨부1)를 참고해 주세요.</div>
-                </div>
-              </SectionCard>
-
-              <SectionCard title="Selected Projects & Initiatives">
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <div className="font-semibold">작은학교살리기 — 순천승주중</div>
-                    <div className="text-gray-600">지역 연계 프로그램과 맞춤형 수업 설계로 학생·학부모 참여 확대</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold">무한상상실 운영 — 순천신흥중</div>
-                    <div className="text-gray-600">메이커 교육 기반의 창의적 체험 학습 운영</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold">위기청소년 통합지원모델 — 이음학교</div>
-                    <div className="text-gray-600">음악·목공·상담을 결합한 회복적 교육과정 설계</div>
-                  </div>
-                </div>
-              </SectionCard>
-            </div>
-
-            {/* LECTURES */}
-            <div id="lectures" className="mt-8">
-              <SectionCard title="Lectures • 강의 (주요 주제)">
-                <div className="space-y-3 text-sm">
-                  <div className="font-semibold">대안교육 관련 법적 이해</div>
-                  <div className="text-gray-600">대안교육 운영의 법·제도적 근거와 실무 적용 포인트를 정리합니다.</div>
-
-                  <div className="font-semibold mt-2">대안교육기관 유형별 특징</div>
-                  <div className="text-gray-600">전형적 대안학교, 위탁교육기관, 지역 네트워크 기반 모델 비교와 적용 사례.</div>
-
-                  <div className="font-semibold mt-2">전라남도 대안교육기관 현황</div>
-                  <div className="text-gray-600">현황 분석을 통한 정책적 제언 및 현장 적용 방안 제시.</div>
-
-                  <hr className="my-3" />
-                  <div className="text-sm text-gray-700">
-                    전체 강의 주제는 <span className="font-semibold text-deepBlue">“대안교육과 학업중단 위기 청소년을 위한 통합 안전망 구축”</span> 입니다.
-                    강의는 이론 + 사례 + 현장 적용 연습(워크숍)으로 구성 가능합니다.
-                  </div>
-                </div>
-              </SectionCard>
-            </div>
-
-            {/* LINKS & CONTACT */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <SectionCard title="Links">
-                <ul className="text-sm list-disc pl-5 space-y-2">
-                  <li>레포지토리: <span className="text-gray-500">깃허브에 업로드 예정</span></li>
-                  <li>강사카드(첨부1): 상세 이력·강의목록 수록</li>
-                  <li>참고자료: 대안교육 관련 주요 정책·보고서(요청 시 제공)</li>
-                </ul>
-              </SectionCard>
-
-              <SectionCard title="Contact" className="col-span-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-sm text-gray-500">이메일</div>
-                    <div className="font-medium text-deepBlue">changhyun@example.com</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500">업무 문의</div>
-                    <div className="font-medium text-deepBlue">강의·컨설팅 / 현장 협업 요청 환영</div>
-                  </div>
-                </div>
-
-                <p className="mt-4 text-sm text-gray-600">
-                  (연락처는 예시입니다. 실제 이메일/연락처로 수정해 주세요.)
-                </p>
-              </SectionCard>
-            </div>
-          </main>
-
-          <footer className="bg-white border-t border-gray-100">
-            <div className="max-w-5xl mx-auto p-6 text-center text-sm text-gray-500">
-              © {new Date().getFullYear()} 김창현 — 주제: 대안교육과 학업중단 위기 청소년을 위한 통합 안전망 구축.  
-              자세한 이력·수상·강의 제목은 레포지토리의 강사카드(첨부1)를 확인하세요.
-            </div>
-          </footer>
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
-</body>
-</html>
+                <div className="space-y-6">
+                  <Card>
+                    <h3 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                      <i data-lucide="trophy" className="w-5 h-5 text-yellow-500"></i> Awards & Recognition
+                    </h3>
+                    <ul className="space-y-3 text-sm text-slate-600">
+                      <li className="flex gap-3">
+                        <span className="font-bold text-slate-800 min-w-max">2024</span>
+                        <span>대안교육 유공 <span className="text-blue-600 font-semibold">교육부장관표창</span></span>
