@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>김창현 · 대안교육</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+</head>
+<body class="bg-white text-gray-800">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const SectionTitle = ({ title }) => (
+      <h2 class="text-3xl font-bold text-blue-600 mb-6">{title}</h2>
+    );
+
+    const Hero = () => (
+      <section class="w-full bg-blue-50 py-20 flex flex-col items-center text-center">
+        <img src="전남이음학교로고.png" alt="전남 이음학교 로고" class="w-24 mb-4" />
+        <h1 class="text-4xl font-extrabold text-blue-700 drop-shadow-sm mb-2">김창현 · Teacher</h1>
+        <p class="text-lg text-blue-500 italic mb-6">Alternative Education · Future Classroom</p>
+        <p class="text-gray-600 mb-6">대안교육 / 학업중단 위기 청소년 교육</p>
+        <img src="박보검.png" alt="프로필 사진" class="w-40 h-40 rounded-full shadow-lg object-cover" />
+      </section>
+    );
+
+    const About = () => (
+      <section class="max-w-4xl mx-auto py-16 px-6">
+        <SectionTitle title="About" />
+        <p class="text-lg leading-relaxed text-gray-700 bg-blue-50 rounded-2xl p-6 shadow">
+          “전쟁은 인간의 마음으로부터 시작되고, 그 방벽을 구축해야 할 곳도 인간의 마음이다.”<br /><br />
+          저는 이 유네스코의 지향점을 교육으로 실천하며, 학생들의 마음에 안전한 기반을 만드는 교육을 추구합니다.
+        </p>
+      </section>
+    );
+
+    const Experience = () => (
+      <section class="max-w-4xl mx-auto py-16 px-6">
+        <SectionTitle title="Experience" />
+        <div class="space-y-6">
+          <div class="bg-white shadow rounded-2xl p-6 border border-blue-100">
+            <h3 class="font-bold text-xl text-blue-700">2013–2015 순천승주중</h3>
+            <p class="text-gray-600">작은학교살리기 프로젝트 참여</p>
+          </div>
+          <div class="bg-white shadow rounded-2xl p-6 border border-blue-100">
+            <h3 class="font-bold text-xl text-blue-700">2016–2020 순천신흥중</h3>
+            <p class="text-gray-600">무한상상실 기반 창작·융합교육 운영</p>
+          </div>
+          <div class="bg-white shadow rounded-2xl p-6 border border-blue-100">
+            <h3 class="font-bold text-xl text-blue-700">2021–2025 이음학교</h3>
+            <p class="text-gray-600">학업중단 위기 청소년 교육 중심</p>
+          </div>
+          <div class="bg-blue-50 shadow rounded-2xl p-6 border border-blue-100">
+            <h3 class="font-bold text-xl text-blue-700">교육 실적</h3>
+            <ul class="list-disc ml-6 text-gray-700">
+              <li>기술경진대회 학생지도 우수</li>
+              <li>정화보경진대회 학생지도 우수</li>
+              <li>교육부 교실혁명선도교사 선정</li>
+              <li>대안교육 유공 교육부장관 표창</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    );
+
+    const Lectures = () => (
+      <section class="max-w-4xl mx-auto py-16 px-6">
+        <SectionTitle title="Lectures" />
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {["대안교육 법적 이해", "기관 유형별 특징", "전남 대안교육기관 현황"].map(item => (
+            <div class="bg-white border border-blue-100 shadow rounded-2xl p-6 text-center text-gray-700">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+
+    const Links = () => (
+      <section class="max-w-4xl mx-auto py-16 px-6">
+        <SectionTitle title="Links" />
+        <p class="text-gray-600">Github / Blog / Portfolio 등을 여기에 배치할 수 있습니다.</p>
+      </section>
+    );
+
+    const Contact = () => (
+      <section class="max-w-4xl mx-auto py-16 px-6">
+        <SectionTitle title="Contact" />
+        <p class="text-gray-600">연락처 또는 이메일 주소 등을 입력할 수 있습니다.</p>
+      </section>
+    );
+
+    const Footer = () => (
+      <footer class="w-full py-6 bg-blue-100 text-center text-gray-600 mt-20">
+        © 2025 Kim Changhyun · Alternative Education Network
+      </footer>
+    );
+
+    const App = () => (
+      <div>
+        <Hero />
+        <About />
+        <Experience />
+        <Lectures />
+        <Links />
+        <Contact />
+        <Footer />
+      </div>
+    );
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
